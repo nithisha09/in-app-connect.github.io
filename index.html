@@ -72,7 +72,7 @@
             top: 10px;
             right: 10px;
             padding: 10px 15px;
-            background: red;
+            background: rgb(0, 153, 255);
             color: white;
             border: none;
             border-radius: 5px;
@@ -87,9 +87,9 @@
             display: none;
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            right: 15px;
             padding: 10px 15px;
-            background: blue;
+            background: rgb(0, 153, 255);
             color: white;
             border: none;
             border-radius: 5px;
@@ -97,12 +97,12 @@
         }
 
         #widgetButton:hover {
-            background: darkblue;
+            background: rgb(0, 139, 28);
         }
     </style>
 </head>
 <body>
-    <button id="logoffBtn" onclick="logoff()">Logoff</button>
+    <button id="logoffBtn" onclick="logoff()">Log Out</button>
     <div class="login-container" id="loginForm">
         <h2>Login</h2>
         <input type="email" id="email" placeholder="Enter your email" required>
@@ -112,7 +112,7 @@
     </div>
 
     <div class="scenery" id="sceneryView"></div>
-    <button id="widgetButton" onclick="initializeWidget()">Open Widget</button>
+    <button id="widgetButton" onclick="toggleWidgetButton()">Click here for Support</button>
 
     <script>
         function validateLogin() {
@@ -140,6 +140,14 @@
             document.getElementById("email").value = "";
             document.getElementById("password").value = "";
             removeWidget();
+        }
+
+        function toggleWidgetButton() {
+            const button = document.getElementById("widgetButton");
+            if (button.textContent === "Click here for Support") {
+                button.textContent = "Click the Phone Icon to get Connected to BG Agent";
+                initializeWidget(); // Call your widget initialization function
+            }
         }
 
         function initializeWidget() {
