@@ -16,8 +16,9 @@
             width: 100%;
             height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             background-color: #f4f4f4;
             transition: background 1s ease-in-out;
         }
@@ -65,28 +66,43 @@
             background: url('istockphoto-517188688-612x612.jpg') no-repeat center center/cover;
         }
 
-        #logoutButton {
+        #logoffBtn {
+            display: none;
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: #dc3545;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background: red;
             color: white;
             border: none;
-            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            display: none;
         }
 
-        #chat-widget-container {
+        #logoffBtn:hover {
+            background: darkred;
+        }
+
+        #widgetButton {
+            display: none;
             position: fixed;
             bottom: 20px;
             right: 20px;
-            display: none;
+            padding: 10px 15px;
+            background: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #widgetButton:hover {
+            background: darkblue;
         }
     </style>
 </head>
 <body>
+    <button id="logoffBtn" onclick="logoff()">Logoff</button>
     <div class="login-container" id="loginForm">
         <h2>Login</h2>
         <input type="email" id="email" placeholder="Enter your email" required>
@@ -95,14 +111,10 @@
         <p id="error-msg" style="color: red; display: none;">Invalid credentials!</p>
     </div>
 
-    <div class="scenery" id="sceneryView">
-        <button id="logoutButton" onclick="logout()">Logout</button>
-        <div id="chat-widget-container"></div>
-    </div>
+    <div class="scenery" id="sceneryView"></div>
+    <button id="widgetButton" onclick="initializeWidget()">Open Widget</button>
 
     <script>
-        let chatLoaded = false;
-
         function validateLogin() {
             let email = document.getElementById("email").value;
             let password = document.getElementById("password").value;
@@ -111,49 +123,51 @@
             if (email === "nk" && password === "12345") {
                 document.getElementById("loginForm").style.display = "none";
                 document.getElementById("sceneryView").style.display = "block";
-                document.getElementById("logoutButton").style.display = "block";
-                errorMsg.style.display = "none";
-                loadChatWidget();
+                document.getElementById("logoffBtn").style.display = "block";
+                document.getElementById("widgetButton").style.display = "block";
+                document.getElementById("email").value = "";
+                document.getElementById("password").value = "";
             } else {
                 errorMsg.style.display = "block";
             }
         }
 
-        function logout() {
-            document.getElementById("sceneryView").style.display = "none";
+        function logoff() {
             document.getElementById("loginForm").style.display = "block";
-            document.getElementById("logoutButton").style.display = "none";
-            document.getElementById("chat-widget-container").style.display = "none";
-            unloadChatWidget();
+            document.getElementById("sceneryView").style.display = "none";
+            document.getElementById("logoffBtn").style.display = "none";
+            document.getElementById("widgetButton").style.display = "none";
+            document.getElementById("email").value = "";
+            document.getElementById("password").value = "";
+            removeWidget();
         }
 
-        function loadChatWidget() {
-            if (chatLoaded) return;
-            const script = document.createElement('script');
-            script.src = 'https://d2zasqxhmd6ne4.cloudfront.net/amazon-connect-chat-interface-client.js';
-            script.async = 1;
-            script.id = '68d70b27-b152-4ef2-95a6-c29dc4303fe6';
-            document.head.appendChild(script);
-
-            script.onload = () => {
-                window.amazon_connect = window.amazon_connect || function() { (window.amazon_connect.ac = window.amazon_connect.ac || []).push(arguments) };
-                amazon_connect('styles', { iconType: 'VOICE', openChat: { color: '#ffffff', backgroundColor: '#123456' }, closeChat: { color: '#ffffff', backgroundColor: '#123456'} });
-                amazon_connect('snippetId', 'QVFJREFIajZXQjcyUXcrNFBEZVZpU0tIdzdFSjJTRnF3a2E2WXVITnhwS1FrcWpBd1FHNXBpMXJZV0NqNVNiRThNWGx2YlpTQUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNWGU3dVZNRFFaNUNxSC85aUFnRVFnQ3RlcW9kYk1hWUJINEhaa1ExRHJZNTUxUEhxZ1NidTUwT3JSdUwwYkN5VmovRG9uSDJLQXl4VnhLcjU6OitieTgyek41UFFoWU51SnNYdmEyK0Q4WE5jM3EzcTlJVW1ZSWhWWVNkT1NNbnJhZEFRM3c2VlZnQ3p5blFMSjZmcEZLOUswYmZtVndPZU91ajdsTUdyZDcxa0ZTTjZiZkdaUkZnbjlZMXQrUG8vUll1YVpIVHF3T3o2SWVzUmIyclBjdlA0YjZrTFpzZXROQmhPaDBUMWNnMytUUXpyST0=');
-                amazon_connect('supportedMessagingContentTypes', [ 'text/plain', 'text/markdown', 'application/vnd.amazonaws.connect.message.interactive', 'application/vnd.amazonaws.connect.message.interactive.response' ]);
-                amazon_connect('containerId', 'chat-widget-container');
-                document.getElementById('chat-widget-container').style.display = 'block';
-                chatLoaded = true;
-            };
+        function initializeWidget() {
+            (function(w, d, x, id){
+                s=d.createElement('script');
+                s.src='https://d2zasqxhmd6ne4.cloudfront.net/amazon-connect-chat-interface-client.js';
+                s.async=1;
+                s.id=id;
+                d.getElementsByTagName('head')[0].appendChild(s);
+                w[x] =  w[x] || function() { (w[x].ac = w[x].ac || []).push(arguments) };
+            })(window, document, 'amazon_connect', '68d70b27-b152-4ef2-95a6-c29dc4303fe6');
+            amazon_connect('styles', { iconType: 'VOICE', openChat: { color: '#ffffff', backgroundColor: '#123456' }, closeChat: { color: '#ffffff', backgroundColor: '#123456'} });
+            amazon_connect('snippetId', 'QVFJREFIajZXQjcyUXcrNFBEZVZpU0tIdzdFSjJTRnF3a2E2WXVITnhwS1FrcWpBd1FHNXBpMXJZV0NqNVNiRThNWGx2YlpTQUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNWGU3dVZNRFFaNUNxSC85aUFnRVFnQ3RlcW9kYk1hWUJINEhaa1ExRHJZNTUxUEhxZ1NidTUwT3JSdUwwYkN5VmovRG9uSDJLQXl4VnhLcjU6OitieTgyek41UFFoWU51SnNYdmEyK0Q4WE5jM3EzcTlJVW1ZSWhWWVNkT1NNbnJhZEFRM3c2VlZnQ3p5blFMSjZmcEZLOUswYmZtVndPZU91ajdsTUdyZDcxa0ZTTjZiZkdaUkZnbjlZMXQrUG8vUll1YVpIVHF3T3o2SWVzUmIyclBjdlA0YjZrTFpzZXROQmhPaDBUMWNnMytUUXpyST0=');
+            amazon_connect('supportedMessagingContentTypes', [ 'text/plain', 'text/markdown', 'application/vnd.amazonaws.connect.message.interactive', 'application/vnd.amazonaws.connect.message.interactive.response' ]);
+            amazon_connect('contactAttributes', {customerName: 'Test', email: 'testMail' });
         }
 
-        function unloadChatWidget() {
-            const chatScript = document.getElementById('68d70b27-b152-4ef2-95a6-c29dc4303fe6');
-            if (chatScript) {
-                chatScript.remove();
-                delete window.amazon_connect;
-                chatLoaded = false;
+        function removeWidget() {
+            let widget = document.getElementById('amazon-connect-chat-widget');
+            if (widget) widget.remove();
+        }
+
+        window.addEventListener("pagehide", (event) => {
+            let iframe = document.getElementById("amazon-connect-chat-widget-iframe");
+            if (iframe && iframe.contentWindow && iframe.contentWindow.connect) {
+                iframe.contentWindow.connect.ChatSession.disconnect();
             }
-        }
+        });
     </script>
 </body>
 </html>
