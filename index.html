@@ -12,7 +12,6 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Centering the login box */
         body, html {
             width: 100%;
             height: 100vh;
@@ -23,7 +22,6 @@
             transition: background 1s ease-in-out;
         }
 
-        /* Login container */
         .login-container {
             background: white;
             padding: 20px;
@@ -59,7 +57,6 @@
             background: #218838;
         }
 
-        /* Nature background after login */
         .scenery {
             display: none;
             position: fixed;
@@ -67,11 +64,23 @@
             height: 100vh;
             background: url('istockphoto-517188688-612x612.jpg') no-repeat center center/cover;
         }
+
+        #logoutButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Initially hidden */
+        }
     </style>
 </head>
 <body>
 
-    <!-- Login Screen -->
     <div class="login-container" id="loginForm">
         <h2>Login</h2>
         <input type="email" id="email" placeholder="Enter your email" required>
@@ -80,37 +89,61 @@
         <p id="error-msg" style="color: red; display: none;">Invalid credentials!</p>
     </div>
 
-    <!-- Nature Background After Login -->
-    <div class="scenery" id="sceneryView"></div>
+    <div class="scenery" id="sceneryView">
+        <button id="logoutButton" onclick="logout()">Logout</button>
+    </div>
 
     <script>
+        let chatLoaded = false; // Flag to track if chat is loaded
+
         function validateLogin() {
             let email = document.getElementById("email").value;
             let password = document.getElementById("password").value;
             let errorMsg = document.getElementById("error-msg");
 
             if (email === "nk" && password === "12345") {
-                document.getElementById("loginForm").style.display = "none"; // Hide login
-                document.getElementById("sceneryView").style.display = "block"; // Show nature background
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("sceneryView").style.display = "block";
+                document.getElementById("logoutButton").style.display = "block";
+                errorMsg.style.display = "none";
+                loadChatWidget(); // Load the chat widget after login
             } else {
                 errorMsg.style.display = "block";
             }
         }
-    </script>
 
-    <script type="text/javascript">
-    (function(w, d, x, id){
-      s=d.createElement('script');
-      s.src='https://d2zasqxhmd6ne4.cloudfront.net/amazon-connect-chat-interface-client.js';
-      s.async=1;
-      s.id=id;
-      d.getElementsByTagName('head')[0].appendChild(s);
-      w[x] =  w[x] || function() { (w[x].ac = w[x].ac || []).push(arguments) };
-    })(window, document, 'amazon_connect', '68d70b27-b152-4ef2-95a6-c29dc4303fe6');
-    amazon_connect('styles', { iconType: 'VOICE', openChat: { color: '#ffffff', backgroundColor: '#123456' }, closeChat: { color: '#ffffff', backgroundColor: '#123456'} });
-    amazon_connect('snippetId', 'QVFJREFIajZXQjcyUXcrNFBEZVZpU0tIdzdFSjJTRnF3a2E2WXVITnhwS1FrcWpBd1FHNXBpMXJZV0NqNVNiRThNWGx2YlpTQUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNWGU3dVZNRFFaNUNxSC85aUFnRVFnQ3RlcW9kYk1hWUJINEhaa1ExRHJZNTUxUEhxZ1NidTUwT3JSdUwwYkN5VmovRG9uSDJLQXl4VnhLcjU6OitieTgyek41UFFoWU51SnNYdmEyK0Q4WE5jM3EzcTlJVW1ZSWhWWVNkT1NNbnJhZEFRM3c2VlZnQ3p5blFMSjZmcEZLOUswYmZtVndPZU91ajdsTUdyZDcxa0ZTTjZiZkdaUkZnbjlZMXQrUG8vUll1YVpIVHF3T3o2SWVzUmIyclBjdlA0YjZrTFpzZXROQmhPaDBUMWNnMytUUXpyST0=');
-    amazon_connect('supportedMessagingContentTypes', [ 'text/plain', 'text/markdown', 'application/vnd.amazonaws.connect.message.interactive', 'application/vnd.amazonaws.connect.message.interactive.response' ]);
+        function logout() {
+            document.getElementById("sceneryView").style.display = "none";
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("logoutButton").style.display = "none";
+            unloadChatWidget(); // Remove chat widget on logout
+        }
+
+        function loadChatWidget() {
+            if (chatLoaded) return; // Prevent multiple loads
+            const script = document.createElement('script');
+            script.src = 'https://d2zasqxhmd6ne4.cloudfront.net/amazon-connect-chat-interface-client.js';
+            script.async = 1;
+            script.id = '68d70b27-b152-4ef2-95a6-c29dc4303fe6';
+            document.head.appendChild(script);
+
+            script.onload = () => {
+                window.amazon_connect = window.amazon_connect || function() { (window.amazon_connect.ac = window.amazon_connect.ac || []).push(arguments) };
+                amazon_connect('styles', { iconType: 'VOICE', openChat: { color: '#ffffff', backgroundColor: '#123456' }, closeChat: { color: '#ffffff', backgroundColor: '#123456'} });
+                amazon_connect('snippetId', 'QVFJREFIajZXQjcyUXcrNFBEZVZpU0tIdzdFSjJTRnF3a2E2WXVITnhwS1FrcWpBd1FHNXBpMXJZV0NqNVNiRThNWGx2YlpTQUFBQWJqQnNCZ2txaGtpRzl3MEJCd2FnWHpCZEFnRUFNRmdHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNWGU3dVZNRFFaNUNxSC85aUFnRVFnQ3RlcW9kYk1hWUJINEhaa1ExRHJZNTUxUEhxZ1NidTUwT3JSdUwwYkN5VmovRG9uSDJLQXl4VnhLcjU6OitieTgyek41UFFoWU51SnNYdmEyK0Q4WE5jM3EzcTlJVW1ZSWhWWVNkT1NNbnJhZEFRM3c2VlZnQ3p5blFMSjZmcEZLOUswYmZtVndPZU91ajdsTUdyZDcxa0ZTTjZiZkdaUkZnbjlZMXQrUG8vUll1YVpIVHF3T3o2SWVzUmIyclBjdlA0YjZrTFpzZXROQmhPaDBUMWNnMytUUXpyST0=');
+                amazon_connect('supportedMessagingContentTypes', [ 'text/plain', 'text/markdown', 'application/vnd.amazonaws.connect.message.interactive', 'application/vnd.amazonaws.connect.message.interactive.response' ]);
+                chatLoaded = true;
+            };
+        }
+
+        function unloadChatWidget() {
+            const chatScript = document.getElementById('68d70b27-b152-4ef2-95a6-c29dc4303fe6');
+            if (chatScript) {
+                chatScript.remove();
+                delete window.amazon_connect; //remove amazon_connect function
+                chatLoaded = false;
+            }
+        }
     </script>
-    
 </body>
 </html>
